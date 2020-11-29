@@ -28,6 +28,7 @@ struct HomeView: App {
             store.state.archiveState()
         })
         setupApperance()
+        self.validCredentialOrUserLogged = false
         self.loginUsername = "aneudys"
         self.loginPassword = "amparo"
     }
@@ -50,7 +51,7 @@ struct HomeView: App {
             }
             else {
                 StoreProvider(store: store) {
-                    LoginView().accentColor(.steam_gold)
+                    LoginView().accentColor(.steam_gold).onAppear(perform: UIApplication.shared.addTapGestureRecognizer)
                 }
             }
         }
