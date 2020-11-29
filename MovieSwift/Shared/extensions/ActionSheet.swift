@@ -94,4 +94,19 @@ extension ActionSheet {
                             onAction(nil)
                            })])
     }
+    
+    static func sortByDateActionSheet(onAction: @escaping ((MoviesSort?) -> Void)) -> ActionSheet {
+        let byReleaseDateAsc: Alert.Button = .default(Text("Sort by release date asc")) {
+            onAction(.byReleaseDateAsc)
+        }
+        let byReleaseDate: Alert.Button = .default(Text("Sort by release date")) {
+            onAction(.byReleaseDate)
+        }
+        
+        return ActionSheet(title: Text("Sort movies by"),
+                           message: nil,
+                           buttons: [byReleaseDateAsc, byReleaseDate, Alert.Button.cancel({
+                            onAction(nil)
+                           })])
+    }
 }

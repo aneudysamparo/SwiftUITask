@@ -9,7 +9,7 @@
 import Foundation
 
 enum MoviesSort {
-    case byReleaseDate, byAddedDate, byScore, byPopularity
+    case byReleaseDate, byAddedDate, byScore, byPopularity, byReleaseDateAsc
     
     func title() -> String {
         switch self {
@@ -21,6 +21,8 @@ enum MoviesSort {
             return "by rating"
         case .byPopularity:
             return "by popularity"
+        case .byReleaseDateAsc:
+            return "by release date asc"
         }
     }
     
@@ -34,6 +36,8 @@ enum MoviesSort {
             return "vote_average.desc"
         case .byPopularity:
             return "popularity.desc"
+        case .byReleaseDateAsc:
+            return "release_date.asc"
         }
     }
 }
@@ -53,6 +57,9 @@ extension Sequence where Iterator.Element == Int {
         case .byScore:
             let movies = state.moviesState.movies.filter{ self.contains($0.key) }
             return movies.sorted{ $0.value.vote_average > $1.value.vote_average }.compactMap{ $0.key }
+        case .byReleaseDateAsc:
+            let movies = state.moviesState.movies.filter{ self.contains($0.key) }
+            return movies.sorted{ $0.value.releaseDate ?? Date() < $1.value.releaseDate ?? Date() }.compactMap{ $0.key }
         }
     }
 }
