@@ -99,7 +99,7 @@ extension ActionSheet {
         let byReleaseDateAsc: Alert.Button = .default(Text("Sort by release date asc")) {
             onAction(.byReleaseDateAsc)
         }
-        let byReleaseDate: Alert.Button = .default(Text("Sort by release date")) {
+        let byReleaseDate: Alert.Button = .default(Text("Sort by release date desc")) {
             onAction(.byReleaseDate)
         }
         
