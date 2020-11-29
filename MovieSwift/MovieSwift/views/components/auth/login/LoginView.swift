@@ -9,24 +9,44 @@
 import SwiftUI
 
 struct LoginView: View {
+    //MARK: - ENV Vars
+    @Environment(\.colorScheme) var colorScheme
+    
     //MARK: - PRIVATE PROPERTIES
     @State private var username = ""
     @State private var password = ""
     @State private var isFormSubmitted: Bool = false
     @State private var hasCredentialsError: Bool = false
+    @State private var isLoading: Bool = false
     
     //MARK: - APPSTORAGE PROPERTIES
-    @AppStorage("isUserLogged") var isUserLogged: Bool?
     @AppStorage("username") var loginUsername: String?
     @AppStorage("password") var loginPassword: String?
     @AppStorage("isValidCredentialOrUserLogged") var validCredentialOrUserLogged: Bool?
+    
+    private func validateCredential() {
+        self.isLoading = true
+        self.isFormSubmitted = true
+        self.hasCredentialsError = false
+        
+        if(username.lowercased() != self.loginUsername?.lowercased() || password != self.loginPassword ){
+            self.isLoading = false
+            self.hasCredentialsError = true
+        }
+        else {
+            let _: () = DispatchQueue.main.schedule(after: .init(.now() + 1.3)) {
+                self.validCredentialOrUserLogged = true
+                print("login")
+            }
+        }
+    }
     
     var body: some View {
         
         // Wrapper
         ZStack{
             // BG COLOR
-            Color.gray
+            Color.steam_background
             
             VStack{
                 // LOGO
@@ -43,21 +63,65 @@ struct LoginView: View {
                 
                 //FORM
                 VStack(spacing: 15.0){
+                    VStack(spacing: 10.0){
+                        // Username
+                        AppTextField(
+                            icon: "person",
+                            placeholder: Text("Username"),
+                            fontName: "FHACondFrenchNC",
+                            fontSize: 18,
+                            fontColor: (colorScheme == .dark ) ? Color.white.opacity(0.5) : Color.black.opacity(0.5),
+                            text: $username,
+                            isFormSubmitted: $isFormSubmitted,
+                            label: "Username")
+                        
+                        // Password
+                        AppSecuredField(
+                            icon: "lock",
+                            placeholder: Text("Password"),
+                            fontName: "FHACondFrenchNC",
+                            fontSize: 18,
+                            fontColor: (colorScheme == .dark ) ? Color.white.opacity(0.5) : Color.black.opacity(0.5),
+                            text: $password,
+                            isFormSubmitted: $isFormSubmitted,
+                            label: "Password")
+                        
+                        if(isFormSubmitted && hasCredentialsError){
+                            AppFormError(errorMessage: "Invalid credentials")
+                        }
+                    }// VStack-Inputs
                     
                     
                     //LOGIN BUTTON
-                    Button(action: {print("Login Button")}){
-                        Text("login".uppercased())
-                            .modifier(AppTextStyle(fontName: "FHACondFrenchNC", fontSize: 20, fontColor: .black))
-                            .modifier(AppButtonStyle(buttonHeight: 60, buttonColor: .steam_gold, buttonRadius: 20))
-                        
+                    if(isLoading){
+                        AppActivityIndicator(isAnimating: .constant(true), style: .large)
+                            .foregroundColor(.white)
+                    }else {
+                        Button(action: validateCredential){
+                            Text("login".uppercased())
+                                .modifier(
+                                    AppTextStyle(
+                                        fontName: "FHACondFrenchNC",
+                                        fontSize: 20,
+                                        fontColor: .white)
+                                )
+                                .modifier(
+                                    AppButtonStyle(
+                                        buttonHeight: 60,
+                                        buttonColor: .steam_gold,
+                                        buttonRadius: 20)
+                                )
+                            
+                        }
+                        .padding(.vertical, 30.0)
                     }
-                    .padding(.horizontal, 35.0)
-                    .padding(.vertical, 30.0)
+                    
                 }// VStack-Form
+                .padding(.horizontal, 20)
                 
             }//VStack
         }// ZStack
+        .ignoresSafeArea()
     }
 }
 

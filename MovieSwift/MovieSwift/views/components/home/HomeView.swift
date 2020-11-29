@@ -17,6 +17,10 @@ let store = Store<AppState>(reducer: appStateReducer,
 
 @main
 struct HomeView: App {
+    @AppStorage("username") var loginUsername: String?
+    @AppStorage("password") var loginPassword: String?
+    @AppStorage("isValidCredentialOrUserLogged") var validCredentialOrUserLogged: Bool?
+    
     let archiveTimer: Timer
     
     init() {
@@ -24,6 +28,9 @@ struct HomeView: App {
             store.state.archiveState()
         })
         setupApperance()
+        self.validCredentialOrUserLogged = false
+        self.loginUsername = "aneudys"
+        self.loginPassword = "amparo"
     }
     
     #if targetEnvironment(macCatalyst)
@@ -37,9 +44,15 @@ struct HomeView: App {
     #else
     var body: some Scene {
         WindowGroup {
-            StoreProvider(store: store) {
-                LoginView().accentColor(.steam_gold)
-                //TabbarView().accentColor(.steam_gold)
+            if((validCredentialOrUserLogged != nil ) && validCredentialOrUserLogged!){
+                StoreProvider(store: store) {
+                    TabbarView().accentColor(.steam_gold)
+                }
+            }
+            else {
+                StoreProvider(store: store) {
+                    LoginView().accentColor(.steam_gold)
+                }
             }
         }
     }
