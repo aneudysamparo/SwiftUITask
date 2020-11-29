@@ -48,7 +48,8 @@ struct LoginView: View {
                     //LOGIN BUTTON
                     Button(action: {print("Login Button")}){
                         Text("login".uppercased())
-                            .foregroundColor(.black)
+                            .modifier(AppTextStyle(fontName: "FHACondFrenchNC", fontSize: 20, fontColor: .black))
+                            .modifier(AppButtonStyle(buttonHeight: 60, buttonColor: .steam_gold, buttonRadius: 20))
                         
                     }
                     .padding(.horizontal, 35.0)
