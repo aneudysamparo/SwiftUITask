@@ -35,6 +35,7 @@ struct MoviesList: ConnectedView {
     let movies: [Int]
     let displaySearch: Bool
     var pageListener: MoviesPagesListener?
+    var isInnerPage: Bool = false
     
     // MARK: - Computed Props
     func map(state: AppState, dispatch: @escaping DispatchFunction) -> Props {
@@ -155,6 +156,7 @@ struct MoviesList: ConnectedView {
                     }
             }
         }
+        .navigationBarHidden(isInnerPage)
         .listStyle(PlainListStyle())
         .animation(.spring())
     }

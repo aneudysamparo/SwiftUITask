@@ -23,9 +23,11 @@ struct MoviesHomeGrid: ConnectedView {
                     .foregroundColor(.steam_gold)
                     .padding(.horizontal, 16)
                     .padding(.top, 16)
-                NavigationLink(destination: MoviesList(movies: props.movies[menu] ?? [],
-                                                       displaySearch: true,
-                                                       pageListener: MoviesMenuListPageListener(menu: menu, loadOnInit: false))
+                NavigationLink(destination: MoviesListView(
+                                movies: props.movies,
+                                        menu: menu,
+                                        displaySearch: true,
+                                        listener: MoviesMenuListPageListener(menu: menu, loadOnInit: false))
                     .navigationBarTitle(menu.title()),
                                label: {
                                 Spacer()

@@ -88,6 +88,7 @@ struct MoviesHome : View {
             ).sheet(isPresented: $isSettingPresented,
                     content: { SettingsForm() })
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 
