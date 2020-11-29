@@ -28,7 +28,6 @@ struct HomeView: App {
             store.state.archiveState()
         })
         setupApperance()
-        self.validCredentialOrUserLogged = false
         self.loginUsername = "aneudys"
         self.loginPassword = "amparo"
     }
