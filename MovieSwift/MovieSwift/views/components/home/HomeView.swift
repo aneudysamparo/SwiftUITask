@@ -38,6 +38,7 @@ struct HomeView: App {
     var body: some Scene {
         WindowGroup {
             StoreProvider(store: store) {
+                // Test Start 8:04AM
                 TabbarView().accentColor(.steam_gold)
             }
         }
