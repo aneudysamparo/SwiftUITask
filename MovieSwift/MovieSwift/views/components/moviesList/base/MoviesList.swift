@@ -31,11 +31,40 @@ struct MoviesList: ConnectedView {
     @State private var searchTextWrapper = MoviesSearchTextWrapper()
     @State private var isSearching = false
     
+    @EnvironmentObject private var store: Store<AppState>
+    @State private var sortBy = MoviesSort.byReleaseDate
+    @State private var isSortActionSheetPresented = false
+    
     // MARK: - Public var
     let movies: [Int]
     let displaySearch: Bool
     var pageListener: MoviesPagesListener?
-    var isInnerPage: Bool = false
+    var menu: MoviesMenu?
+    
+    private var sortButton : some  View{
+        Button(action: {
+            self.isSortActionSheetPresented.toggle()
+        }, label: {
+            Image(systemName: "line.horizontal.3.decrease.circle")
+                .resizable()
+                .frame(width: 25, height: 25)
+        })
+    }
+    
+    private var sortActionSheet: ActionSheet {
+        ActionSheet.sortByDateActionSheet { (sort) in
+            if let sort = sort{
+                updateSorting(sort: sort)
+            }
+        }
+    }
+    
+    private func updateSorting(sort: MoviesSort){
+        
+        if(sortBy != sort){
+            sortBy = sort
+        }
+    }
     
     // MARK: - Computed Props
     func map(state: AppState, dispatch: @escaping DispatchFunction) -> Props {
@@ -50,7 +79,7 @@ struct MoviesList: ConnectedView {
     
     // MARK: - Computed views
     private func moviesRows(props: Props) -> some View {
-        ForEach(isSearching ? props.searchedMovies ?? [] : movies, id: \.self) { id in
+        ForEach(isSearching ? props.searchedMovies ?? [] : menu == MoviesMenu.popular ? movies.sortedMoviesIds(by: self.sortBy, state: store.state) : movies, id: \.self) { id in
             NavigationLink(destination: MovieDetail(movieId: id)) {
                 MovieRow(movieId: id)
             }
@@ -119,9 +148,8 @@ struct MoviesList: ConnectedView {
         }.pickerStyle(SegmentedPickerStyle())
     }
     
-    // MARK: - Body
-    func body(props: Props) -> some View {
-        List {
+    func bodyContent(props: Props) -> some View {
+        Group {
             if displaySearch {
                 Section {
                     searchField
@@ -156,9 +184,28 @@ struct MoviesList: ConnectedView {
                     }
             }
         }
-        .navigationBarHidden(isInnerPage)
-        .listStyle(PlainListStyle())
-        .animation(.spring())
+    }
+    
+    // MARK: - Body
+    func body(props: Props) -> some View {
+        Group{
+            if(menu == MoviesMenu.popular){
+                List {
+                    bodyContent(props: props)
+                }
+                .actionSheet(isPresented: $isSortActionSheetPresented, content: { sortActionSheet })
+                .listStyle(PlainListStyle())
+                .animation(.spring())
+                .navigationBarItems(trailing: sortButton)
+            }else {
+                List {
+                    bodyContent(props: props)
+                }
+                .listStyle(PlainListStyle())
+                .animation(.spring())
+            }
+        }
+        
     }
 }
 
